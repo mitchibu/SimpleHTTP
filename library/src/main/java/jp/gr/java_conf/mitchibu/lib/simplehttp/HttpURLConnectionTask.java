@@ -70,7 +70,11 @@ public class HttpURLConnectionTask<E> extends SimpleHTTP.Task<E> {
 				out = null;
 			}
 
-			res.statusCode = http.getResponseCode();
+			try {
+				res.statusCode = http.getResponseCode();
+			} catch(Exception e) {
+				res.statusCode = http.getResponseCode();
+			}
 			res.message = http.getResponseMessage();
 			res.headers.putAll(http.getHeaderFields());
 			if(res.statusCode / 100 == 2) {

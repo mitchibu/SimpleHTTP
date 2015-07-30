@@ -77,17 +77,38 @@ public class HttpURLConnectionTask<E> extends SimpleHTTP.Task<E> {
 			}
 			res.message = http.getResponseMessage();
 			res.headers.putAll(http.getHeaderFields());
-			if(res.statusCode / 100 == 2) {
-				encode = null;
-				List<String> contentEncodings = res.headers.get("Content-Encoding");
-				if(contentEncodings != null) {
-					if(contentEncodings.size() > 0) encode = contentEncodings.get(0);
-				}
-				in = http.getInputStream();
+
+//			if(res.statusCode / 100 == 2) {
+//				encode = null;
+//				List<String> contentEncodings = res.headers.get("Content-Encoding");
+//				if(contentEncodings != null) {
+//					if(contentEncodings.size() > 0) encode = contentEncodings.get(0);
+//				}
+//				in = http.getInputStream();
+//				if("gzip".equalsIgnoreCase(encode)) in = new GZIPInputStream(in);
+//				else if("deflate".equalsIgnoreCase(encode)) in = new DeflaterInputStream(in);
+//			}
+			encode = null;
+			List<String> contentEncodings = res.headers.get("Content-Encoding");
+			if(contentEncodings != null) {
+				if(contentEncodings.size() > 0) encode = contentEncodings.get(0);
+			}
+			boolean succeeded = res.statusCode / 100 == 2;
+			in = succeeded ? http.getInputStream() : http.getErrorStream();
+			if(in != null) {
 				if("gzip".equalsIgnoreCase(encode)) in = new GZIPInputStream(in);
 				else if("deflate".equalsIgnoreCase(encode)) in = new DeflaterInputStream(in);
+
+				if(succeeded) {
+					res.data = req.onResponse(in);
+				} else {
+					StringBuilder sb = new StringBuilder();
+					byte[] buffer = new byte[1024];
+					int len;
+					while((len = in.read(buffer)) > 0) sb.append(new String(buffer, 0, len));
+					res.body = sb.toString();
+				}
 			}
-			if(in != null) res.data = req.onResponse(in);
 		} finally {
 			if(in != null) try { in.close(); } catch(Exception e) {}
 			if(out != null) try { out.close(); } catch(Exception e) {}

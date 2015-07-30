@@ -14,7 +14,6 @@ import jp.gr.java_conf.mitchibu.lib.simplehttp.entity.Entity;
 
 import android.net.Uri;
 import android.os.Handler;
-import android.util.Pair;
 
 public class SimpleHTTP {
 	private static final ExecutorService defaultExecutorService = Executors.newFixedThreadPool(5);
@@ -121,8 +120,9 @@ public class SimpleHTTP {
 	public static class Response<E> {
 		protected int statusCode = -1;
 		protected String message = null;
-		protected final Map<String, List<String>> headers = new HashMap<String, List<String>>();
+		protected final Map<String, List<String>> headers = new HashMap<>();
 		protected E data = null;
+		protected String body = null;
 
 		/**
 		 * HTTPステータスコードを取得する。
@@ -154,6 +154,14 @@ public class SimpleHTTP {
 		 */
 		public E getData() {
 			return data;
+		}
+
+		/**
+		 * エラー応答時のボディデータを取得する。
+		 * @return ボディデータ
+		 */
+		public String getBody() {
+			return body;
 		}
 	}
 

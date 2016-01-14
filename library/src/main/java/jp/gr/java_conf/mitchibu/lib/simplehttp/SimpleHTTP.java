@@ -12,28 +12,30 @@ import java.util.concurrent.FutureTask;
 
 import jp.gr.java_conf.mitchibu.lib.simplehttp.entity.Entity;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 
 public class SimpleHTTP {
 	private static final ExecutorService defaultExecutorService = Executors.newFixedThreadPool(5);
-	private static final Handler handler = new Handler();
 
+	private final Handler handler;
 	private final ExecutorService executorService;
 
 	/**
 	 * コンストラクタ
 	 */
-	public SimpleHTTP() {
-		this(defaultExecutorService);
+	public SimpleHTTP(Context context) {
+		this(context, defaultExecutorService);
 	}
 
 	/**
 	 * コンストラクタ
 	 * @param executorService undocumented
 	 */
-	public SimpleHTTP(ExecutorService executorService) {
+	public SimpleHTTP(Context context, ExecutorService executorService) {
 		this.executorService = executorService;
+		handler = new Handler(context.getMainLooper());
 	}
 
 	/**

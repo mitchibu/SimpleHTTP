@@ -4,21 +4,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import jp.gr.java_conf.mitchibu.lib.simplehttp.entity.Entity;
 
@@ -118,35 +109,36 @@ public class HttpURLConnectionTask<E> extends SimpleHTTP.Task<E> {
 	}
 
 	private static HttpURLConnection getHttpsConnection(String url) throws Exception {
-		URL connUrl = new URL(url);
-		if("https".equals(connUrl.getProtocol())) {
-			TrustManager[] tm = { new X509TrustManager() {
-				public X509Certificate[] getAcceptedIssuers() {
-					return null;
-				}
-
-				@Override
-				public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-				@Override
-				public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-				}
-			}};
-			SSLContext sslcontext = SSLContext.getInstance("SSL");
-			sslcontext.init(null, tm, null);
-			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-				@Override
-				public boolean verify(String hostname, SSLSession session) {
-					return true;
-				}
-			});
-
-			HttpsURLConnection conn = (HttpsURLConnection)connUrl.openConnection();
-			((HttpsURLConnection)conn).setSSLSocketFactory(sslcontext.getSocketFactory());
-			return conn;
-		} else {
-			return (HttpURLConnection)connUrl.openConnection();
-		}
+		return (HttpURLConnection)new URL(url).openConnection();
+//		URL connUrl = new URL(url);
+//		if("https".equals(connUrl.getProtocol())) {
+//			TrustManager[] tm = { new X509TrustManager() {
+//				public X509Certificate[] getAcceptedIssuers() {
+//					return null;
+//				}
+//
+//				@Override
+//				public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+//                }
+//
+//				@Override
+//				public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+//				}
+//			}};
+//			SSLContext sslcontext = SSLContext.getInstance("SSL");
+//			sslcontext.init(null, tm, null);
+//			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+//				@Override
+//				public boolean verify(String hostname, SSLSession session) {
+//					return true;
+//				}
+//			});
+//
+//			HttpsURLConnection conn = (HttpsURLConnection)connUrl.openConnection();
+//			((HttpsURLConnection)conn).setSSLSocketFactory(sslcontext.getSocketFactory());
+//			return conn;
+//		} else {
+//			return (HttpURLConnection)connUrl.openConnection();
+//		}
 	}
 }

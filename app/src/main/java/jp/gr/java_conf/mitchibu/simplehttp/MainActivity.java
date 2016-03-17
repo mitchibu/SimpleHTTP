@@ -20,23 +20,6 @@ public class MainActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		TestRequest request = new TestRequest();
-		new SimpleHTTP(this).exec(request, new SimpleHTTP.Listener<String>() {
-			@Override
-			public void onDone(Future<SimpleHTTP.Response<String>> future) {
-				try {
-					SimpleHTTP.Response<String> response = future.get();
-					android.util.Log.v("test", "test");
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-			@Override
-			public void onCancelled(Future<SimpleHTTP.Response<String>> future) {
-			}
-		});
 	}
 
 
@@ -60,21 +43,5 @@ public class MainActivity extends ActionBarActivity {
 		}
 
 		return super.onOptionsItemSelected(item);
-	}
-
-	class TestRequest extends StringRequest {
-		public TestRequest() {
-			super(Method.GET, Uri.parse("https://cpfaplbasicout.famima.com/CMN/api/news?top=1"));
-		}
-
-		@Override
-		protected int getConnectTimeout() throws Exception {
-			return 10000;
-		}
-
-		@Override
-		protected int getReadTimeout() throws Exception {
-			return super.getReadTimeout();
-		}
 	}
 }

@@ -11,6 +11,9 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+
 import jp.gr.java_conf.mitchibu.lib.simplehttp.entity.Entity;
 
 public class HttpURLConnectionTask<E> extends SimpleHTTP.Task<E> {
@@ -109,7 +112,18 @@ public class HttpURLConnectionTask<E> extends SimpleHTTP.Task<E> {
 	}
 
 	private static HttpURLConnection getHttpsConnection(String url) throws Exception {
-		return (HttpURLConnection)new URL(url).openConnection();
+//		return (HttpURLConnection)new URL(url).openConnection();
+		URL connUrl = new URL(url);
+		if("https".equals(connUrl.getProtocol())) {
+			SSLContext sslcontext = SSLContext.getInstance("TLS");
+			sslcontext.init(null, null, null);
+
+			HttpsURLConnection conn = (HttpsURLConnection)connUrl.openConnection();
+			conn.setSSLSocketFactory(sslcontext.getSocketFactory());
+			return conn;
+		} else {
+			return (HttpURLConnection)connUrl.openConnection();
+		}
 //		URL connUrl = new URL(url);
 //		if("https".equals(connUrl.getProtocol())) {
 //			TrustManager[] tm = { new X509TrustManager() {

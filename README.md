@@ -1,4 +1,6 @@
 # SimpleHTTP
+Use okhttp!
+This project is done.(no maintenance)
 
 #Gradle
 repositories {
